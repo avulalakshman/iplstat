@@ -29,7 +29,7 @@ public class IplstatDataUtil {
 					});
 			log.info("Total {} teams found in the file: {}", teams.size(), fileName);
 		} catch (IOException e) {
-			log.error("While loadin data from file:{}", e);
+			log.error("While loading data from file:{}", e);
 		}
 
 		return teams;

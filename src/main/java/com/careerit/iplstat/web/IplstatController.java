@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.careerit.iplstat.domain.Player;
 import com.careerit.iplstat.dto.LabelDTO;
+import com.careerit.iplstat.dto.PlayerDTO;
 import com.careerit.iplstat.dto.RoleCountDTO;
+import com.careerit.iplstat.dto.TeamAmountDTO;
+import com.careerit.iplstat.dto.TeamDTO;
 import com.careerit.iplstat.service.IplstatService;
 
 @RestController
@@ -34,12 +36,27 @@ public class IplstatController {
 		return iplstatService.roleCountByTeam(label);
 	}
 	@RequestMapping("/players/{label}/{rolename}")
-	public List<Player> getPlayerByLabelAndRole(@PathVariable("label")String label,@PathVariable("rolename")String roleName){
+	public List<PlayerDTO> getPlayerByLabelAndRole(@PathVariable("label")String label,@PathVariable("rolename")String roleName){
+		return iplstatService.playersByLabelAndRole(label,roleName);
+	}
+	@RequestMapping("/players/{label}")
+	public List<PlayerDTO> getPlayerByLabel(@PathVariable("label")String label){
+		return iplstatService.playersByLabel(label);
+	}
+	
+	@RequestMapping("/teams")
+	public List<TeamDTO> getAllTeams(){
+		
+		return null;
+		
+	}
+	@RequestMapping("/teams/amountspent")
+	public List<TeamAmountDTO> getAmountSpentByAllTeams(){
 		
 		return null;
 	}
-	@RequestMapping("/players/{label}")
-	public List<Player> getPlayerByLabel(@PathVariable("label")String label){
+	@RequestMapping("/teams/{label}/amountforallroles")
+	public List<TeamAmountDTO> getAmountSpentByTeamForAllRoles(@PathVariable("label")String label){
 		
 		return null;
 	}
