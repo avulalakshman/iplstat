@@ -12,6 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class TeamAmountDTO {
-		private String teamName;
+		private String label;
 		private double amount;
 }

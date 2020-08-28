@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +31,12 @@ public class IplstatServiceImpl implements IplstatService {
 	private IplstatDataUtil dataUtil;
 
 	private List<Team> teams;
+	private ModelMapper mapper;
 
 	@Autowired
-	public IplstatServiceImpl(IplstatDataUtil dataUtil) {
+	public IplstatServiceImpl(IplstatDataUtil dataUtil, ModelMapper mapper) {
 		this.dataUtil = dataUtil;
+		this.mapper = mapper;
 		teams = this.dataUtil.loadDataFromJson();
 	}
 
@@ -72,27 +75,6 @@ public class IplstatServiceImpl implements IplstatService {
 	@Override
 	public List<PlayerDTO> playersByLabel(String label) {
 		Assert.notNull(label, "Label name can't be empty or null");
-
-//		Team team = null;
-//		for (Team t : teams) {
-//			if (t.getLabel().equals(label)) {
-//				team = t;
-//				break;
-//			}
-//		}
-//
-//		if (team != null) {
-//			List<Player> players = team.getPlayers();
-//			List<PlayerDTO> list = new ArrayList<>();
-//			for (Player p : players) {
-//				PlayerDTO obj = PlayerDTO.builder().name(p.getName()).price(p.getPrice()).role(p.getRole()).label(label)
-//						.build();
-//				list.add(obj);
-//			}
-//			log.info("Total {} player found for the given team : {}",list.size(),label);
-//			return list;
-//		}
-
 		Optional<Team> optTeam = teams.stream().filter(t -> t.getLabel().equals(label)).findFirst();
 		if (optTeam.isPresent()) {
 			Team team = optTeam.get();
@@ -132,20 +114,43 @@ public class IplstatServiceImpl implements IplstatService {
 
 	@Override
 	public List<TeamDTO> allTeamDetails() {
-		// TODO Auto-generated method stub
-		return null;
+		List<TeamDTO> teamsList = teams.stream().map(t -> mapper.map(t, TeamDTO.class)).collect(Collectors.toList());
+		log.info("Total team found :{}", teamsList.size());
+		return teamsList;
 	}
 
 	@Override
 	public List<TeamAmountDTO> getAmountSpentByTeams() {
-		// TODO Auto-generated method stub
-		return null;
+		List<TeamAmountDTO> list = new ArrayList<>();
+		for (Team t : teams) {
+			String label = t.getLabel();
+			double amount = t.getPlayers().stream().mapToDouble(p -> p.getPrice()).sum();
+			TeamAmountDTO obj = new TeamAmountDTO();
+			obj.setLabel(label);
+			obj.setAmount(amount);
+			list.add(obj);
+		}
+		return list;
 	}
 
 	@Override
 	public List<TeamRoleAmountDTO> getAmountSpentByTeamAllRoles(String label) {
-		// TODO Auto-generated method stub
-		return null;
+		Assert.notNull(label, "Label name can't be empty or null");
+		Optional<Team> optTeam = teams.stream().filter(t -> t.getLabel().equals(label)).findFirst();
+		if (optTeam.isPresent()) {
+			Team team = optTeam.get();
+			List<Player> players = team.getPlayers();
+			Map<String, Double> map = players.stream()
+					.collect(Collectors.groupingBy(Player::getRole, Collectors.summingDouble(Player::getPrice)));
+
+			List<TeamRoleAmountDTO> list = map.entrySet().stream()
+					.map(e -> new TeamRoleAmountDTO(e.getKey(), e.getValue())).collect(Collectors.toList());
+
+			return list;
+
+		}
+		log.warn("Team with the label {} is not found", label);
+		throw new TeamNotFoundException("Team with label :" + label + " is not found");
 	}
 
 }
