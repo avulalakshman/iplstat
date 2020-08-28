@@ -13,7 +13,7 @@
 	<artifactId>iplstat</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>iplstat</name>
-	<description>Iplstat - Spring Boot Application</description>
+	<description>Iplstat - Spring Boot Application with MongoDB</description>
 
 	<properties>
 		<java.version>14</java.version>
