@@ -8,7 +8,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Player {
+
 	private String name;
-	private String role;
 	private double price;
+	private String role;
 }

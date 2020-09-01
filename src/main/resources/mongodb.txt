@@ -1,0 +1,132 @@
+1. Get all team labels
+
+       labels : ["CSK",.....]
+
+	[
+		{
+			$group: {
+ 		 			_id: null,
+  			                label: {
+   						 $addToSet: "$label"
+  					}
+				}
+		},
+
+		 {
+			$project: {
+  				_id:0,
+  				"label":1
+			}
+		}
+	]
+
+2. Get all players by the team label
+
+[
+{
+    $match: {
+        "label": "RCB"
+    }
+}, {
+    $unwind: {
+        path: "$players"
+
+    }
+}, {
+    $project: {
+        "name": "$players.name",
+        "role": "$players.role",
+        "label": "$label",
+        "price": "$players.price",
+        "_id": 0
+    }
+}]
+
+3. Get players count for each role for the given team label
+
+[
+{$match: {
+  "label":"CSK"
+}}, {$unwind: {
+  path: "$players"
+
+ }}, {$group: {
+  _id: "$players.role",
+  count: {
+    $sum : 1
+  }
+}}, {$project: {
+  "rolename":"$_id",
+  "count":"$count",
+  "_id":0
+
+  }}
+]	
+
+4. Get players by team and role
+
+
+[{
+    $match: {
+        "label": "CSK"
+    }
+}, {
+    $unwind: {
+        path: "$players"
+
+    }
+}, {
+    $match: {
+        "players.role": "Bowler"
+    }
+}, {
+    $project: {
+        "name": "$players.name",
+        "label": "$label",
+        "price": "$players.price",
+        "role": "$players.role",
+        "_id": 0
+    }
+}]
+
+5. Get all team details
+
+{
+  "_id":0,
+  "players":0
+  
+}
+
+6. Get amount spent by each team
+
+[{$unwind: {
+  path: "$players"
+
+ }}, {$group: {
+  _id: "$label",
+  amount: {
+    $sum: "$players.price"
+  }
+}}, {$project: {
+  "label":"$_id",
+  "amount":"$amount",
+  "_id":0
+}}]
+
+7. Get amount spent by the given team on each role
+
+[{$match: {
+  "label":"CSK"
+}}, {$unwind: {
+  path: "$players",
+
+  }}, {$group: {
+  _id: "$players.role",
+  amount: {
+    $sum: "$players.price"
+  }
+}}, {$project: {
+  "label":"$_id",
+  "amount":"$amount",
+  "_id":0
+}}]

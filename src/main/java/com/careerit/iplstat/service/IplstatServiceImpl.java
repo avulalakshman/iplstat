@@ -10,11 +10,13 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.careerit.iplstat.domain.Player;
 import com.careerit.iplstat.domain.Team;
+import com.careerit.iplstat.dto.LabelDTO;
 import com.careerit.iplstat.dto.PlayerDTO;
 import com.careerit.iplstat.dto.RoleCountDTO;
 import com.careerit.iplstat.dto.TeamAmountDTO;
@@ -22,6 +24,7 @@ import com.careerit.iplstat.dto.TeamDTO;
 import com.careerit.iplstat.dto.TeamRoleAmountDTO;
 import com.careerit.iplstat.service.exception.TeamNotFoundException;
 import com.careerit.iplstat.util.IplstatDataUtil;
+
 
 @Service
 public class IplstatServiceImpl implements IplstatService {
@@ -39,12 +42,12 @@ public class IplstatServiceImpl implements IplstatService {
 		this.mapper = mapper;
 		teams = this.dataUtil.loadDataFromJson();
 	}
-
+	//TODO needs to chage logic
 	@Override
-	public List<String> labels() {
+	public LabelDTO labels() {
 		List<String> labelNames = teams.stream().map(t -> t.getLabel()).collect(Collectors.toList());
 		log.info("Team label count :{}", labelNames.size());
-		return labelNames;
+		return null;
 	}
 
 	@Override

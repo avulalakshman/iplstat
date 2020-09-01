@@ -24,10 +24,8 @@ public class IplstatController {
 
 	@RequestMapping("/teams/label")
 	public LabelDTO getLabels() {
-		List<String> labels = iplstatService.labels();
-		LabelDTO labelDTO = new LabelDTO();
-		labelDTO.setLabels(labels);
-		return labelDTO;
+		 LabelDTO labels = iplstatService.labels();
+		 return labels;
 	}
 
 	@RequestMapping("/rolecount/{label}")
